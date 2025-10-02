@@ -334,59 +334,6 @@ The API will support webhooks for real-time notifications:
 }
 ```
 
-## SDK and Client Libraries
-
-### JavaScript/Node.js
-
-```javascript
-const TaskAPI = require('@taskmanagement/api-client');
-
-const client = new TaskAPI({
-  baseURL: 'http://localhost:5000/api',
-  token: 'your_jwt_token'
-});
-
-// Create a task
-const task = await client.tasks.create({
-  title: 'New Task',
-  description: 'Task description',
-  dueDate: '2025-10-15',
-  assignedTo: 'user_id'
-});
-
-// Get tasks
-const tasks = await client.tasks.list({
-  status: 'in-progress',
-  page: 1,
-  limit: 10
-});
-```
-
-### Python
-
-```python
-from taskmanagement_api import TaskClient
-
-client = TaskClient(
-    base_url='http://localhost:5000/api',
-    token='your_jwt_token'
-)
-
-# Create a task
-task = client.tasks.create(
-    title='New Task',
-    description='Task description',
-    due_date='2025-10-15',
-    assigned_to='user_id'
-)
-
-# Get tasks
-tasks = client.tasks.list(
-    status='in-progress',
-    page=1,
-    limit=10
-)
-```
 
 ## Testing the API
 
@@ -400,18 +347,6 @@ See examples above for curl commands.
 2. Set up environment variables for base URL and token
 3. Run the collection tests
 
-### Using HTTPie
-
-```bash
-# Register
-http POST localhost:5000/api/auth/register name="John Doe" email="john@example.com" password="password123"
-
-# Login
-http POST localhost:5000/api/auth/login email="john@example.com" password="password123"
-
-# Create task (with token)
-http POST localhost:5000/api/tasks Authorization:"Bearer <token>" title="New Task" description="Task description" dueDate="2025-10-15T10:00:00.000Z" assignedTo="user_id"
-```
 
 ## Versioning
 
@@ -426,9 +361,8 @@ The API follows semantic versioning:
 - **API Documentation**: `/api-docs`
 - **Health Check**: `/health`
 - **API Status**: `/status`
-- **GitHub Repository**: [Link to repository]
-- **Issue Tracker**: [Link to issues]
-- **Community Forum**: [Link to forum]
+- **GitHub Repository**: <https://github.com/siddharthgupta5/Task-Management-Platform.git>
+
 
 ## Changelog
 

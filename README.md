@@ -2,7 +2,7 @@
 
 A full-stack task management application built with React.js frontend and Node.js/Express backend, featuring user authentication, task operations, real-time comments, file uploads, and comprehensive analytics.
 
-## 🚀 Features
+##  Features
 
 ### Core Functionality
 - **User Authentication**: Secure JWT-based authentication with registration and login
@@ -24,7 +24,7 @@ A full-stack task management application built with React.js frontend and Node.j
 - **Search & Filtering**: Advanced task search and filtering capabilities
 - **Pagination**: Efficient data loading for large datasets
 
-## 🏗️ Architecture
+##  Architecture
 
 ### Technology Stack
 
@@ -76,7 +76,7 @@ A full-stack task management application built with React.js frontend and Node.j
 - **Client-side Error Boundaries**: Graceful error handling in React
 - **Toast Notifications**: User-friendly error and success messages
 
-## 📋 Prerequisites
+##  Prerequisites
 
 Before running this application, ensure you have the following installed:
 
@@ -85,7 +85,7 @@ Before running this application, ensure you have the following installed:
 - **MongoDB** (local installation or MongoDB Atlas account)
 - **Git**
 
-## ⚙️ Environment Variables
+##  Environment Variables
 
 Create the following environment files:
 
@@ -132,16 +132,14 @@ REACT_APP_API_URL=http://localhost:5000/api
 REACT_APP_NAME=Task Management Platform
 REACT_APP_VERSION=1.0.0
 
-# Development Configuration
-GENERATE_SOURCEMAP=false
 ```
 
-## 🚀 Installation & Setup
+##  Installation & Setup
 
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repository-url>
+git clone <https://github.com/siddharthgupta5/Task-Management-Platform.git>
 cd task-management-platform
 ```
 
@@ -155,7 +153,6 @@ cd backend
 npm install
 
 # Create environment file
-cp .env.example .env
 # Edit .env with your configuration values
 
 # Create uploads directory
@@ -182,7 +179,6 @@ cd frontend
 npm install
 
 # Create environment file
-cp .env.example .env
 # Edit .env with your configuration values
 
 # Start the development server
@@ -197,46 +193,20 @@ The frontend application will start on `http://localhost:3000`
 2. **API Documentation**: Visit `http://localhost:5000/api-docs`
 3. **Frontend Application**: Visit `http://localhost:3000`
 
-## 🔧 Development Workflow
+##  Development Workflow
 
 ### Running the Application
 
-#### Development Mode
 ```bash
 # Terminal 1: Start Backend
 cd backend
-npm run dev
+npm start
 
 # Terminal 2: Start Frontend
 cd frontend
 npm start
 ```
 
-#### Production Mode
-```bash
-# Backend
-cd backend
-npm start
-
-# Frontend (build and serve)
-cd frontend
-npm run build
-npm install -g serve
-serve -s build -l 3000
-```
-
-### Database Management
-
-#### Initialize Database
-The application will automatically create the necessary collections when you start using it.
-
-#### Reset Database (Development Only)
-```bash
-# Connect to MongoDB and drop the database
-mongo
-use taskmanagement
-db.dropDatabase()
-```
 
 ### File Upload Configuration
 
@@ -247,29 +217,8 @@ mkdir -p uploads
 touch uploads/.gitkeep
 ```
 
-## 🧪 Testing
 
-### Backend Testing
-```bash
-cd backend
-npm test
-```
-
-### Frontend Testing
-```bash
-cd frontend
-npm test
-```
-
-### End-to-End Testing
-```bash
-# Install Cypress (optional)
-cd frontend
-npm install --save-dev cypress
-npx cypress open
-```
-
-## 📊 API Documentation
+##  API Documentation
 
 The API documentation is automatically generated using Swagger and is available at:
 - **Development**: `http://localhost:5000/api-docs`
@@ -307,62 +256,8 @@ The API documentation is automatically generated using Swagger and is available 
 - `GET /api/analytics/performance` - Get user performance
 - `POST /api/analytics/export` - Export tasks data
 
-## 🔒 Security Considerations
 
-### Implemented Security Measures
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: Bcrypt for password encryption
-- **CORS Configuration**: Controlled cross-origin requests
-- **Helmet.js**: Security headers implementation
-- **Rate Limiting**: API request rate limiting
-- **Input Validation**: Request data validation
-- **File Upload Security**: File type and size restrictions
-
-### Security Best Practices
-- Use HTTPS in production
-- Regular dependency updates
-- Environment variable protection
-- Database connection security
-- Regular security audits
-
-## 📈 Performance Optimizations
-
-### Frontend Optimizations
-- **Code Splitting**: Lazy loading of components
-- **Memoization**: React.memo and useMemo for optimization
-- **Efficient Re-renders**: Proper dependency management in hooks
-- **Image Optimization**: Compressed assets
-- **Bundle Analysis**: Webpack bundle analyzer
-
-### Backend Optimizations
-- **Database Indexing**: Proper MongoDB indexes
-- **Query Optimization**: Efficient database queries
-- **Compression**: Gzip compression middleware
-- **Caching**: Strategic response caching
-- **Connection Pooling**: Mongoose connection optimization
-
-## 🚀 Deployment
-
-### Frontend Deployment (Netlify/Vercel)
-```bash
-cd frontend
-npm run build
-# Deploy the 'build' folder
-```
-
-### Backend Deployment (Heroku/Railway/DigitalOcean)
-```bash
-# Ensure all environment variables are set
-# Push to your deployment platform
-```
-
-### Docker Deployment
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-```
-
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -396,27 +291,9 @@ Error: listen EADDRINUSE :::5000
 ```
 **Solution**: Kill the process using the port or change the PORT in .env.
 
-### Debug Mode
 
-#### Backend Debug
-```bash
-DEBUG=* npm start
-```
 
-#### Frontend Debug
-```bash
-REACT_APP_DEBUG=true npm start
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 Assumptions Made
+##  Assumptions Made
 
 ### Technical Assumptions
 1. **Single Tenant Application**: Designed for single organization use
@@ -444,17 +321,7 @@ REACT_APP_DEBUG=true npm start
 3. **Data Volume**: Optimized for typical task management data volumes
 4. **Network**: Assumes reliable internet connectivity
 
-## 📞 Support
 
-For support and questions:
-- Create an issue in the repository
-- Contact: support@taskmanagement.com
 - Documentation: [API Docs](http://localhost:5000/api-docs)
 
-## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Built with ❤️ for efficient task management**
