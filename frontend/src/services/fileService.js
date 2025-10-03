@@ -1,14 +1,10 @@
 import api from './api';
 
 export const fileService = {
-  // Upload files to a task
-  uploadFiles: async (taskId, files) => {
+  // Upload file to task
+  uploadFile: async (taskId, file) => {
     const formData = new FormData();
-    
-    // Add files to FormData - backend expects 'file' field name for single file
-    if (files.length > 0) {
-      formData.append('file', files[0]); // Backend only handles single file upload
-    }
+    formData.append('file', file);
 
     const response = await api.post(`/files/upload/${taskId}`, formData, {
       headers: {
@@ -20,13 +16,13 @@ export const fileService = {
 
   // Get all files for a task
   getTaskFiles: async (taskId) => {
-    const response = await api.get(`/files/task/${taskId}`);
+    const response = await api.get(`/files/${taskId}`);
     return response.data;
   },
 
-  // Download/Get file
+  // Download file
   downloadFile: async (taskId, filename) => {
-    const response = await api.get(`/files/download/${taskId}/${filename}`, {
+    const response = await api.get(`/files/${taskId}/${filename}`, {
       responseType: 'blob',
     });
     return response.data;
@@ -38,17 +34,10 @@ export const fileService = {
     return response.data;
   },
 
-  // Helper function to trigger file download
-  triggerDownload: (blob, filename) => {
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  }
+  // Helper function to create download URL
+  getDownloadUrl: (taskId, filename) => {
+    return `/api/files/${taskId}/${filename}`;
+  },
 };
 
 export default fileService;
