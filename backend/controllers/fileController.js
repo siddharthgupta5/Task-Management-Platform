@@ -49,7 +49,7 @@ const upload = multer({
 // @desc    Upload files to task
 // @route   POST /api/files/upload/:taskId
 // @access  Private
-const uploadFiles = asyncHandler(async (req, res) => {
+const uploadFile = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
 
   // Verify task exists
@@ -61,37 +61,36 @@ const uploadFiles = asyncHandler(async (req, res) => {
     });
   }
 
-  if (!req.files || req.files.length === 0) {
+  if (!req.file) {
     return res.status(400).json({
       success: false,
-      message: 'No files uploaded'
+      message: 'No file uploaded'
     });
   }
 
   // Add file information to task
-  const uploadedFiles = req.files.map(file => ({
-    filename: file.filename,
-    originalName: file.originalname,
-    mimetype: file.mimetype,
-    size: file.size
-  }));
+  const uploadedFile = {
+    filename: req.file.filename,
+    originalName: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size,
+    uploadedAt: new Date()
+  };
 
-  task.attachments.push(...uploadedFiles);
+  task.attachments.push(uploadedFile);
   await task.save();
 
   res.status(201).json({
     success: true,
-    message: `${req.files.length} file(s) uploaded successfully`,
-    data: {
-      files: uploadedFiles
-    }
+    message: 'File uploaded successfully',
+    data: uploadedFile
   });
 });
 
 // @desc    Get/Download file
 // @route   GET /api/files/:taskId/:filename
 // @access  Private
-const getFile = asyncHandler(async (req, res) => {
+const downloadFile = asyncHandler(async (req, res) => {
   const { taskId, filename } = req.params;
 
   // Verify task exists and user has access
@@ -202,8 +201,8 @@ const getTaskFiles = asyncHandler(async (req, res) => {
 
 module.exports = {
   upload,
-  uploadFiles,
-  getFile,
+  uploadFile,
+  downloadFile,
   deleteFile,
   getTaskFiles
 };

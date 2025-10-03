@@ -343,8 +343,8 @@ const exportTasksData = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  getTaskOverview,
+  getAnalyticsOverview: getTaskOverview,
   getUserPerformance,
   getTaskTrends,
-  exportTasksData
+  exportTasks: exportTasksData
 };
