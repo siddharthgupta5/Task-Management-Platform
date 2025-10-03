@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management API Documentation</title>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui.css" />
+  <style>
+    html {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+    body {
+      margin: 0;
+      background: #fafafa;
+    }
+    .swagger-ui .topbar {
+      display: none;
+    }
+    .swagger-ui .info {
+      margin: 50px 0;
+    }
+    .swagger-ui .info .title {
+      color: #3b82f6;
+    }
+    .swagger-ui .scheme-container {
+      background: #f8fafc;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  
+  <script src="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-standalone-preset.js"></script>
+  <script>
+    // Fetch the OpenAPI spec and initialize Swagger UI
+    fetch('./openapi.json')
+      .then(response => response.json())
+      .then(spec => {
+        // Update server URLs for the current deployment
+        spec.servers = [
+          {
+            url: window.location.origin + '/api',
+            description: 'Production API Server (Vercel)'
+          },
+          {
+            url: 'http://localhost:5000',
+            description: 'Development server'
+          }
+        ];
+
+        // Initialize Swagger UI
+        window.ui = SwaggerUIBundle({
+          spec: spec,
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+          ],
+          plugins: [
+            SwaggerUIBundle.plugins.DownloadUrl
+          ],
+          layout: "StandaloneLayout",
+          tryItOutEnabled: true,
+          filter: true,
+          displayRequestDuration: true,
+          persistAuthorization: true,
+          docExpansion: 'list',
+          showExtensions: true,
+          showCommonExtensions: true
+        });
+      })
+      .catch(error => {
+        console.error('Error loading API specification:', error);
+        document.getElementById('swagger-ui').innerHTML = 
+          '<div style="padding: 50px; text-align: center;">' +
+          '<h2>Error Loading API Documentation</h2>' +
+          '<p>Could not load the OpenAPI specification. Please check the console for details.</p>' +
+          '</div>';
+      });
+  </script>
+</body>
+</html>

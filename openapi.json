@@ -1,0 +1,1848 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Task Management Platform API",
+    "version": "1.0.0",
+    "description": "A comprehensive task management platform with user authentication, task operations, comments, file uploads, and analytics.",
+    "contact": {
+      "name": "API Support",
+      "email": "support@taskmanagement.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://siddharthgupta5.github.io/Task-Management-Platform",
+      "description": "Production server (GitHub Pages)"
+    },
+    {
+      "url": "http://localhost:5000",
+      "description": "Development server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter your JWT token in the format: Bearer <token>"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier for the user",
+            "example": "60d5ecb54b24a1001f5e4b2a"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the user",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address of the user",
+            "example": "john.doe@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "admin"
+            ],
+            "description": "User role in the system",
+            "example": "user"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the user account is active",
+            "example": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Account creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last account update timestamp"
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier for the task",
+            "example": "60d5ecb54b24a1001f5e4b2b"
+          },
+          "title": {
+            "type": "string",
+            "description": "Task title",
+            "example": "Implement user authentication"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed task description",
+            "example": "Implement JWT-based user authentication with login and registration endpoints"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "todo",
+              "in-progress",
+              "in-review",
+              "completed"
+            ],
+            "description": "Current task status",
+            "example": "in-progress"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "urgent"
+            ],
+            "description": "Task priority level",
+            "example": "high"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Task due date",
+            "example": "2025-10-15T10:00:00.000Z"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags associated with the task",
+            "example": [
+              "authentication",
+              "backend",
+              "security"
+            ]
+          },
+          "assignedTo": {
+            "$ref": "#/components/schemas/User",
+            "description": "User assigned to this task"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/User",
+            "description": "User who created this task"
+          },
+          "estimatedHours": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Estimated hours to complete the task",
+            "example": 8
+          },
+          "actualHours": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Actual hours spent on the task",
+            "example": 10
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "filename": {
+                  "type": "string",
+                  "description": "Server filename",
+                  "example": "files-1759416477081-949665151.pdf"
+                },
+                "originalName": {
+                  "type": "string",
+                  "description": "Original filename",
+                  "example": "requirements.pdf"
+                },
+                "mimetype": {
+                  "type": "string",
+                  "description": "File MIME type",
+                  "example": "application/pdf"
+                },
+                "size": {
+                  "type": "number",
+                  "description": "File size in bytes",
+                  "example": 1024000
+                },
+                "uploadedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Upload timestamp"
+                }
+              }
+            },
+            "description": "Files attached to the task"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Task creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last task update timestamp"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "dueDate",
+          "assignedTo",
+          "createdBy"
+        ]
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier for the comment",
+            "example": "60d5ecb54b24a1001f5e4b2c"
+          },
+          "content": {
+            "type": "string",
+            "description": "Comment content/text",
+            "example": "This task is progressing well. Need to add input validation."
+          },
+          "task": {
+            "type": "string",
+            "description": "ID of the task this comment belongs to",
+            "example": "60d5ecb54b24a1001f5e4b2b"
+          },
+          "author": {
+            "$ref": "#/components/schemas/User",
+            "description": "User who wrote the comment"
+          },
+          "isEdited": {
+            "type": "boolean",
+            "description": "Whether the comment has been edited",
+            "example": false
+          },
+          "editedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when comment was last edited"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Comment creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last comment update timestamp"
+          }
+        },
+        "required": [
+          "content",
+          "task",
+          "author"
+        ]
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true,
+            "description": "Indicates if the request was successful"
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message",
+            "example": "Operation completed successfully"
+          },
+          "data": {
+            "type": "object",
+            "description": "Response data (varies by endpoint)"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false,
+            "description": "Indicates the request failed"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Validation failed"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Title must be between 3 and 200 characters"
+                },
+                "param": {
+                  "type": "string",
+                  "description": "Parameter that caused the error",
+                  "example": "title"
+                },
+                "location": {
+                  "type": "string",
+                  "description": "Location of the error",
+                  "example": "body"
+                }
+              }
+            },
+            "description": "Detailed validation errors"
+          }
+        },
+        "required": [
+          "success",
+          "message"
+        ]
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication information is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "message": "Access denied. No token provided."
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "message": "Validation failed",
+              "errors": [
+                {
+                  "msg": "Title must be between 3 and 200 characters",
+                  "param": "title",
+                  "location": "body"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "message": "Resource not found"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "message": "Internal server error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and profile management endpoints"
+    },
+    {
+      "name": "Tasks",
+      "description": "Task management operations including CRUD operations and bulk operations"
+    },
+    {
+      "name": "Comments",
+      "description": "Task comment operations for collaboration and communication"
+    },
+    {
+      "name": "Files",
+      "description": "File upload, download, and management for task attachments"
+    },
+    {
+      "name": "Analytics",
+      "description": "Statistics, reporting, and data export functionality"
+    }
+  ],
+  "paths": {
+    "/api/analytics/overview": {
+      "get": {
+        "summary": "Get analytics overview with task statistics",
+        "description": "Provides a comprehensive overview of task statistics including total tasks, completion rates, status distribution, priority distribution, and overdue tasks",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "dateRange",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "week",
+                "month",
+                "quarter",
+                "year"
+              ],
+              "default": "month"
+            },
+            "description": "Time period for analytics data"
+          },
+          {
+            "in": "query",
+            "name": "userId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by specific user ID (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Analytics overview retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalTasks": {
+                          "type": "number",
+                          "example": 150,
+                          "description": "Total number of tasks"
+                        },
+                        "completedTasks": {
+                          "type": "number",
+                          "example": 120,
+                          "description": "Number of completed tasks"
+                        },
+                        "completionRate": {
+                          "type": "number",
+                          "example": 80.5,
+                          "description": "Completion percentage"
+                        },
+                        "overdueCount": {
+                          "type": "number",
+                          "example": 5,
+                          "description": "Number of overdue tasks"
+                        },
+                        "statusStats": {
+                          "type": "object",
+                          "properties": {
+                            "todo": {
+                              "type": "number"
+                            },
+                            "in-progress": {
+                              "type": "number"
+                            },
+                            "in-review": {
+                              "type": "number"
+                            },
+                            "completed": {
+                              "type": "number"
+                            }
+                          },
+                          "example": {
+                            "todo": 20,
+                            "in-progress": 15,
+                            "in-review": 8,
+                            "completed": 120
+                          }
+                        },
+                        "priorityStats": {
+                          "type": "object",
+                          "properties": {
+                            "low": {
+                              "type": "number"
+                            },
+                            "medium": {
+                              "type": "number"
+                            },
+                            "high": {
+                              "type": "number"
+                            },
+                            "urgent": {
+                              "type": "number"
+                            }
+                          },
+                          "example": {
+                            "low": 50,
+                            "medium": 70,
+                            "high": 25,
+                            "urgent": 5
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/analytics/trends": {
+      "get": {
+        "summary": "Get task creation and completion trends over time",
+        "description": "Provides data for trend analysis showing task creation and completion patterns over specified time periods",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "week",
+                "month",
+                "quarter",
+                "year"
+              ],
+              "default": "month"
+            },
+            "description": "Time period for trend analysis"
+          },
+          {
+            "in": "query",
+            "name": "granularity",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "default": "daily"
+            },
+            "description": "Data granularity for trend points"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task trends retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "creationTrends": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string",
+                                "format": "date"
+                              },
+                              "tasksCreated": {
+                                "type": "number"
+                              },
+                              "tasksCompleted": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "date": "2025-09-01",
+                              "tasksCreated": 12,
+                              "tasksCompleted": 8
+                            },
+                            {
+                              "date": "2025-09-02",
+                              "tasksCreated": 15,
+                              "tasksCompleted": 10
+                            }
+                          ]
+                        },
+                        "completionTrends": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string",
+                                "format": "date"
+                              },
+                              "completionRate": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          }
+        }
+      }
+    },
+    "/api/analytics/performance": {
+      "get": {
+        "summary": "Get user performance metrics and statistics",
+        "description": "Provides detailed performance metrics for users including task completion rates, average completion times, and productivity statistics",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "week",
+                "month",
+                "quarter",
+                "year"
+              ],
+              "default": "month"
+            },
+            "description": "Time period for performance analysis"
+          },
+          {
+            "in": "query",
+            "name": "userId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by specific user ID (optional)"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "completionRate",
+                "totalTasks",
+                "avgCompletionTime"
+              ],
+              "default": "completionRate"
+            },
+            "description": "Sort users by performance metric"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User performance data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userPerformance": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "_id": {
+                                "type": "string",
+                                "description": "User ID"
+                              },
+                              "userName": {
+                                "type": "string",
+                                "description": "User name"
+                              },
+                              "userEmail": {
+                                "type": "string",
+                                "description": "User email"
+                              },
+                              "totalTasks": {
+                                "type": "number",
+                                "description": "Total tasks assigned"
+                              },
+                              "completedTasks": {
+                                "type": "number",
+                                "description": "Tasks completed"
+                              },
+                              "completionRate": {
+                                "type": "number",
+                                "description": "Completion percentage"
+                              },
+                              "overdueTasks": {
+                                "type": "number",
+                                "description": "Number of overdue tasks"
+                              },
+                              "avgEstimatedHours": {
+                                "type": "number",
+                                "description": "Average estimated hours per task"
+                              },
+                              "avgActualHours": {
+                                "type": "number",
+                                "description": "Average actual hours spent"
+                              },
+                              "efficiencyRatio": {
+                                "type": "number",
+                                "description": "Estimated vs actual hours ratio"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "_id": "60d5ecb54b24a1001f5e4b2a",
+                              "userName": "John Doe",
+                              "userEmail": "john@example.com",
+                              "totalTasks": 25,
+                              "completedTasks": 20,
+                              "completionRate": 80,
+                              "overdueTasks": 2,
+                              "avgEstimatedHours": 8.5,
+                              "avgActualHours": 9.2,
+                              "efficiencyRatio": 0.92
+                            }
+                          ]
+                        },
+                        "teamStats": {
+                          "type": "object",
+                          "properties": {
+                            "averageCompletionRate": {
+                              "type": "number"
+                            },
+                            "topPerformer": {
+                              "type": "string"
+                            },
+                            "totalTeamTasks": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          }
+        }
+      }
+    },
+    "/api/analytics/export": {
+      "post": {
+        "summary": "Export tasks data in various formats",
+        "description": "Export task data with filtering options in JSON or CSV format for external analysis or reporting",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "format": {
+                    "type": "string",
+                    "enum": [
+                      "json",
+                      "csv"
+                    ],
+                    "default": "json",
+                    "description": "Export format"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Start date for data range"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "End date for data range"
+                  },
+                  "filters": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "todo",
+                            "in-progress",
+                            "in-review",
+                            "completed"
+                          ]
+                        }
+                      },
+                      "priority": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "low",
+                            "medium",
+                            "high",
+                            "urgent"
+                          ]
+                        }
+                      },
+                      "assignedTo": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "Optional filters for export data"
+                  },
+                  "includeComments": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include comments in export"
+                  },
+                  "includeAttachments": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include attachment info in export"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Export data generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of task data (for JSON format)"
+                    },
+                    "downloadUrl": {
+                      "type": "string",
+                      "description": "URL to download the export file (for CSV format)"
+                    },
+                    "totalRecords": {
+                      "type": "number",
+                      "description": "Total number of exported records"
+                    }
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "description": "CSV formatted task data"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "500": {
+            "description": "Server error during export generation"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/auth/profile": {
+      "get": {
+        "summary": "Get current user profile",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user profile",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/comments": {
+      "post": {
+        "summary": "Add a comment to a task",
+        "tags": [
+          "Comments"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "content",
+                  "taskId"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "taskId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comment added successfully"
+          }
+        }
+      }
+    },
+    "/api/comments/task/{taskId}": {
+      "get": {
+        "summary": "Get all comments for a task",
+        "tags": [
+          "Comments"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comments retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/comments/{id}": {
+      "put": {
+        "summary": "Update a comment",
+        "tags": [
+          "Comments"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "content"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment updated successfully"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a comment",
+        "tags": [
+          "Comments"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/files/upload/{taskId}": {
+      "post": {
+        "summary": "Upload a file attachment to a task",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the task to attach the file to"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file to upload (max 10MB)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "File uploaded successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "filename": {
+                          "type": "string"
+                        },
+                        "originalName": {
+                          "type": "string"
+                        },
+                        "mimetype": {
+                          "type": "string"
+                        },
+                        "size": {
+                          "type": "number"
+                        },
+                        "uploadedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid file or task ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "404": {
+            "description": "Task not found"
+          },
+          "413": {
+            "description": "File too large (max 10MB)"
+          }
+        }
+      }
+    },
+    "/api/files/task/{taskId}": {
+      "get": {
+        "summary": "Get all files attached to a task",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the task to get files for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Files retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string",
+                            "description": "Server filename"
+                          },
+                          "originalName": {
+                            "type": "string",
+                            "description": "Original filename"
+                          },
+                          "mimetype": {
+                            "type": "string",
+                            "description": "File MIME type"
+                          },
+                          "size": {
+                            "type": "number",
+                            "description": "File size in bytes"
+                          },
+                          "uploadedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Upload timestamp"
+                          },
+                          "downloadUrl": {
+                            "type": "string",
+                            "description": "URL to download the file"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      }
+    },
+    "/api/files/download/{taskId}/{filename}": {
+      "get": {
+        "summary": "Download a file attachment from a task",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the task the file belongs to"
+          },
+          {
+            "in": "path",
+            "name": "filename",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The filename to download"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File downloaded successfully",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - No access to this file"
+          },
+          "404": {
+            "description": "File or task not found"
+          }
+        }
+      }
+    },
+    "/api/files/{taskId}/{filename}": {
+      "delete": {
+        "summary": "Delete a file attachment from a task",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the task the file belongs to"
+          },
+          {
+            "in": "path",
+            "name": "filename",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The filename to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "File deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - No access to this file"
+          },
+          "404": {
+            "description": "File or task not found"
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "post": {
+        "summary": "Create a new task",
+        "tags": [
+          "Tasks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "description",
+                  "dueDate",
+                  "assignedTo"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "todo",
+                      "in-progress",
+                      "in-review",
+                      "completed"
+                    ]
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high",
+                      "urgent"
+                    ]
+                  },
+                  "dueDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "assignedTo": {
+                    "type": "string"
+                  },
+                  "estimatedHours": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Task created successfully"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all tasks with filtering and pagination",
+        "tags": [
+          "Tasks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "priority",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tasks retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/tasks/bulk": {
+      "post": {
+        "summary": "Create multiple tasks at once",
+        "tags": [
+          "Tasks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tasks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tasks created successfully"
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}": {
+      "get": {
+        "summary": "Get task by ID",
+        "tags": [
+          "Tasks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task retrieved successfully"
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update task",
+        "tags": [
+          "Tasks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string"
+                  },
+                  "dueDate": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task updated successfully"
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete task (soft delete)",
+        "tags": [
+          "Tasks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task deleted successfully"
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      }
+    }
+  }
+}
