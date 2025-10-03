@@ -15,12 +15,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000",
-      "description": "Development server"
+      "url": "https://siddharthgupta5.github.io/Task-Management-Platform",
+      "description": "Production server (GitHub Pages)"
     },
     {
-      "url": "https://your-production-domain.com",
-      "description": "Production server"
+      "url": "http://localhost:5000",
+      "description": "Development server"
     }
   ],
   "components": {

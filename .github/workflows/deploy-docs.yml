@@ -1,0 +1,66 @@
+name: Deploy API Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'backend/docs/**'
+      - 'API_DOCUMENTATION.md'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+        
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm ci
+        
+    - name: Generate OpenAPI specification
+      run: |
+        cd backend
+        # Copy the OpenAPI spec to docs folder
+        cp docs/openapi.json ../docs/openapi.json
+        
+    - name: Update production server URL in OpenAPI spec
+      run: |
+        cd docs
+        # Update the production server URL in the OpenAPI spec
+        node -e "
+        const fs = require('fs');
+        const spec = JSON.parse(fs.readFileSync('openapi.json', 'utf8'));
+        
+        // Update server URLs
+        spec.servers = [
+          {
+            'url': 'https://siddharthgupta5.github.io/Task-Management-Platform',
+            'description': 'Production server (GitHub Pages)'
+          },
+          {
+            'url': 'http://localhost:5000',
+            'description': 'Development server'
+          }
+        ];
+        
+        fs.writeFileSync('openapi.json', JSON.stringify(spec, null, 2));
+        "
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        cname: # Leave empty for GitHub Pages subdomain

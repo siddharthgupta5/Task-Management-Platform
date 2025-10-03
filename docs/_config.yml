@@ -1,0 +1,26 @@
+# GitHub Pages configuration for API documentation
+title: Task Management Platform API Documentation
+description: Complete API documentation for the Task Management Platform
+baseurl: "/Task-Management-Platform"
+url: "https://siddharthgupta5.github.io"
+
+# GitHub Pages settings
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+
+# Include files
+include:
+  - _redirects
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
