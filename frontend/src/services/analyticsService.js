@@ -26,6 +26,14 @@ export const analyticsService = {
       responseType: params.format === 'csv' ? 'blob' : 'json'
     });
     return response.data;
+  },
+
+  // Export analytics data
+  exportAnalytics: async (format = 'csv') => {
+    const response = await api.post(`/analytics/export`, { format }, {
+      responseType: 'blob',
+    });
+    return response.data;
   }
 };
 

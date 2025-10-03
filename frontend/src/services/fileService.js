@@ -5,9 +5,9 @@ export const fileService = {
   uploadFiles: async (taskId, files) => {
     const formData = new FormData();
     
-    // Add files to FormData
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
+    // Add files to FormData - backend expects 'file' field name for single file
+    if (files.length > 0) {
+      formData.append('file', files[0]); // Backend only handles single file upload
     }
 
     const response = await api.post(`/files/upload/${taskId}`, formData, {
@@ -20,13 +20,13 @@ export const fileService = {
 
   // Get all files for a task
   getTaskFiles: async (taskId) => {
-    const response = await api.get(`/files/${taskId}`);
+    const response = await api.get(`/files/task/${taskId}`);
     return response.data;
   },
 
   // Download/Get file
   downloadFile: async (taskId, filename) => {
-    const response = await api.get(`/files/${taskId}/${filename}`, {
+    const response = await api.get(`/files/download/${taskId}/${filename}`, {
       responseType: 'blob',
     });
     return response.data;

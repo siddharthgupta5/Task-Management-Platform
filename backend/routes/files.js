@@ -1,5 +1,5 @@
 const express = require('express');
-const { uploadFile, getTaskFiles, downloadFile } = require('../controllers/fileController');
+const { uploadFile, getTaskFiles, downloadFile, deleteFile } = require('../controllers/fileController');
 const multer = require('multer');
 const path = require('path');
 
@@ -190,5 +190,49 @@ router.get('/task/:taskId', getTaskFiles);
  *         description: Forbidden - No access to this file
  */
 router.get('/download/:taskId/:filename', downloadFile);
+
+/**
+ * @swagger
+ * /api/files/{taskId}/{filename}:
+ *   delete:
+ *     summary: Delete a file attachment from a task
+ *     tags: [Files]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the task the file belongs to
+ *       - in: path
+ *         name: filename
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The filename to delete
+ *     responses:
+ *       200:
+ *         description: File deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "File deleted successfully"
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       404:
+ *         description: File or task not found
+ *       403:
+ *         description: Forbidden - No access to this file
+ */
+router.delete('/:taskId/:filename', deleteFile);
 
 module.exports = router;

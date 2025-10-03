@@ -64,22 +64,25 @@ export const commentsAPI = {
 
 // Files API
 export const filesAPI = {
-  uploadFiles: (taskId, files) => {
-    const formData = new FormData();
-    files.forEach(file => {
-      formData.append('files', file);
-    });
-    return api.post(`/files/upload/${taskId}`, formData, {
+  getTaskFiles: async (taskId) => {
+    const response = await api.get(`/files/task/${taskId}`);
+    return response.data;
+  },
+  uploadFile: async (taskId, formData) => {
+    const response = await api.post(`/files/upload/${taskId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
   },
-  getTaskFiles: (taskId) => api.get(`/files/${taskId}`),
-  downloadFile: (taskId, filename) => api.get(`/files/${taskId}/${filename}`, {
-    responseType: 'blob',
-  }),
-  deleteFile: (taskId, filename) => api.delete(`/files/${taskId}/${filename}`),
+  downloadFile: (taskId, filename) => {
+    return `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/files/download/${taskId}/${filename}`;
+  },
+  deleteFile: async (taskId, filename) => {
+    const response = await api.delete(`/files/${taskId}/${filename}`);
+    return response.data;
+  },
 };
 
 // Analytics API
