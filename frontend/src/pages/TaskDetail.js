@@ -44,11 +44,14 @@ const TaskDetail = () => {
       ]);
 
       setTask(taskRes.data.task);
-      setComments(commentsRes.data.comments);
-      setFiles(filesRes.data.files);
+      setComments(commentsRes.data.comments || []);
+      setFiles(filesRes.data?.files || []);
     } catch (error) {
       showError('Failed to load task details');
       console.error('Task detail error:', error);
+      // Set default values in case of error
+      setComments([]);
+      setFiles([]);
     } finally {
       setLoading(false);
     }
